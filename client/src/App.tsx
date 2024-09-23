@@ -3,14 +3,9 @@ import useEncryption from "./hooks/useEncryption";
 
 const API_URL = "http://localhost:8080";
 
-interface Recovery {
-  count: number;
-  data: string[];
-}
-
 function App() {
   const { data, setData, encryptData, decryptData } = useEncryption();
-  const [recovery, setRecovery] = useState<Recovery>({ count: 0, data: [] });
+  const [recovery, setRecovery] = useState<string[]>([]);
 
   useEffect(() => {
     getData();
@@ -48,7 +43,7 @@ function App() {
   const getRecovery = async () => {
     const response = await fetch(API_URL + "/recover");
     const { data: recoveryData } = await response.json();
-    setRecovery({ count: recoveryData.length, data: recoveryData });
+    setRecovery(recoveryData);
   };
 
   // Verify data from the server
@@ -122,7 +117,7 @@ function App() {
       </div>
       <div>** Backup History ** (From latest to oldest)</div>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "24px" }}>
-        {recovery.data.map((data, index) => (
+        {recovery.map((data, index) => (
           <div key={index} style={{ display: "flex", gap: "10px" }}>
             {index + 1}. {data}
             <button onClick={() => recoverData(index)}>Recover</button>
